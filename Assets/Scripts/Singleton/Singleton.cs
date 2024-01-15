@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public abstract class Singleoton<Type>: MonoBehaviour where Type : Component {
+    static Type _instance;
+    public static Type instance {
+        get {
+            if (!_instance) {
+                GameObject obj = new GameObject(typeof(Type).Name);
+                _instance = obj.AddComponent<Type>();
+            }
+            return _instance;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    protected virtual void Awake() {
+        if (_instance) {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this as Type;
+        DontDestroyOnLoad(gameObject);
     }
 }
